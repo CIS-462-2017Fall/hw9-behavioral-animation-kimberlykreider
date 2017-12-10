@@ -162,17 +162,20 @@ void BehaviorController::control(double deltaT)
 
 		// TODO: insert your code here to compute m_force and m_torque
 
+		m_force = gMass * gOriKv * (m_Vdesired - m_VelB);
+		m_torque = gInertia * (-gOriKv * m_AVelB + gOriKp * (m_thetad - m_Euler));
 
+		double force = m_force[0] * m_force[0] + m_force[1] * m_force[1] + m_force[2] * m_force[2];
+		force = sqrt(force);
+		if (force > gMaxForce) {
+			std::cout << "Error: force is greater than max force" << std::endl;
+		}
 
-
-
-
-
-
-
-
-
-
+		double torque = m_torque[0] * m_torque[0] + m_torque[1] * m_torque[1] + m_torque[2] * m_torque[2];
+		torque = sqrt(torque);
+		if (torque > gMaxTorque) {
+			std::cout << "Error: torque is greater than max torque" << std::endl;
+		}
 
 		// when agent desired agent velocity and actual velocity < 2.0 then stop moving
 		if (m_vd < 2.0 &&  m_state[VEL][_Z] < 2.0)
