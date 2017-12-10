@@ -52,6 +52,13 @@ bool BehaviorViewer::loadModel(const std::string& filename, const std::string& m
 
 void BehaviorViewer::initializeGui()
 {
+
+	/*
+		GUI:  (10 points) In order to help you debug the behaviors as well as fine tune their responses, add relevant behavior parameters to the GUI for tweaking. 
+		Look at BehaviorViewer::initializeGui() function and add similar TwAddVarRW calls (along with their assocaiated callback functions) to connect the static 
+		(e.g. global) parameters for Behavior that you want to modify through the GUI.
+	*/
+
 	ABasicViewer::initializeGui();
 
 	TwDefine(" 'File controls' size='200 300' position='5 185' iconified=true fontresizable=false alpha=200");
@@ -76,6 +83,8 @@ void BehaviorViewer::initializeGui()
 	TwAddVarCB(m_TwBehaviorBar, "Behavior", m_TwBehaviorType, onSetBehaviorCb, onGetBehaviorCb, this, " ");
 	TwAddVarCB(m_TwBehaviorBar, "Num Agents", TW_TYPE_INT32, onSetNumCharactersCb, onGetNumCharactersCb, this, "");
 	TwAddVarCB(m_TwBehaviorBar, "Num Obstacles", TW_TYPE_INT32, onSetNumObstaclesCb, onGetNumObstaclesCb, this, "");
+	
+	//these are the calls you need to add, now look at what the parameters are
 	TwAddVarRW(m_TwBehaviorBar, "Max speed", TW_TYPE_DOUBLE, &BehaviorController::gMaxSpeed, "");
 	TwAddVarRW(m_TwBehaviorBar, "Max angular", TW_TYPE_DOUBLE, &BehaviorController::gMaxAngularSpeed, "");
 	TwAddVarRW(m_TwBehaviorBar, "Neighborhod", TW_TYPE_DOUBLE, &BehaviorController::gKNeighborhood, "");
@@ -84,6 +93,23 @@ void BehaviorViewer::initializeGui()
 	TwAddButton(m_TwBehaviorBar, "Reset", onResetCb, this, "");
 
 	//TODO: Add your code here to create additional GUI Variables
+	//There are 21 static parameters for BehaviorController.
+	TwAddVarRW(m_TwBehaviorBar, "Max force", TW_TYPE_DOUBLE, &BehaviorController::gMaxForce, "");
+	TwAddVarRW(m_TwBehaviorBar, "Max torque", TW_TYPE_DOUBLE, &BehaviorController::gMaxTorque, "");
+	TwAddVarRW(m_TwBehaviorBar, "OriKv", TW_TYPE_DOUBLE, &BehaviorController::gOriKv, "");
+	TwAddVarRW(m_TwBehaviorBar, "OriKp", TW_TYPE_DOUBLE, &BehaviorController::gOriKp, "");
+	TwAddVarRW(m_TwBehaviorBar, "VelKv", TW_TYPE_DOUBLE, &BehaviorController::gVelKv, "");
+	TwAddVarRW(m_TwBehaviorBar, "Mass", TW_TYPE_DOUBLE, &BehaviorController::gMass, "");
+	TwAddVarRW(m_TwBehaviorBar, "Inertia", TW_TYPE_DOUBLE, &BehaviorController::gInertia, "");
+	TwAddVarRW(m_TwBehaviorBar, "Arrival", TW_TYPE_DOUBLE, &BehaviorController::KArrival, "");
+	TwAddVarRW(m_TwBehaviorBar, "Departure", TW_TYPE_DOUBLE, &BehaviorController::KDeparture, "");
+	TwAddVarRW(m_TwBehaviorBar, "Noise", TW_TYPE_DOUBLE, &BehaviorController::KNoise, "");
+	TwAddVarRW(m_TwBehaviorBar, "Wander", TW_TYPE_DOUBLE, &BehaviorController::KWander, "");
+	TwAddVarRW(m_TwBehaviorBar, "KAvoid", TW_TYPE_DOUBLE, &BehaviorController::KAvoid, "");
+	TwAddVarRW(m_TwBehaviorBar, "TAvoid", TW_TYPE_DOUBLE, &BehaviorController::TAvoid, "");
+	TwAddVarRW(m_TwBehaviorBar, "Separation", TW_TYPE_DOUBLE, &BehaviorController::KSeparation, "");
+	TwAddVarRW(m_TwBehaviorBar, "Aligment", TW_TYPE_DOUBLE, &BehaviorController::KAlignment, "");
+	TwAddVarRW(m_TwBehaviorBar, "Cohesion", TW_TYPE_DOUBLE, &BehaviorController::KCohesion, "");
 }
 
 
