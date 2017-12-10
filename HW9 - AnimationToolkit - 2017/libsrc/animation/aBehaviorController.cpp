@@ -211,11 +211,30 @@ void BehaviorController::computeDynamics(vector<vec3>& state, vector<vec3>& cont
 
 	// Compute the stateDot vector given the values of the current state vector and control input vector
 	// TODO: add your code here
+	// compute xdot and update the state
+	//m_state, m_controlInput, m_stateDot, deltaT
 
+	stateDot[0] = m_Vel0;
+	stateDot[1] = state[3];
+	//body acceleration is force / mass
+	vec3 acceleration = controlInput[0];
+	for (int i = 0; i < 3; i++) {
+		acceleration[i] = acceleration[i] / gMass;
+	}
+	stateDot[2] = acceleration;
+	//body angular acceleration is torque / inertia
+	vec3 angularAcceleration = controlInput[1];
+	for (int i = 0; i < 3; i++) {
+		angularAcceleration[i] = angularAcceleration[i] / gInertia;
+	}
+	stateDot[3] = angularAcceleration;
 
-
-
-
+	//compute V0 from Vbz and Thetay
+	mat3 rotationB0;
+	double theta = m_Euler[1];
+	vec3 axis = { 0, 1, 0 };
+	rotationB0.FromAxisAngle(axis, theta);
+	m_Vel0 = rotationB0 * m_VelB;
 }
 
 void BehaviorController::updateState(float deltaT, int integratorType)
@@ -224,13 +243,39 @@ void BehaviorController::updateState(float deltaT, int integratorType)
 	//  this should be similar to what you implemented in the particle system assignment
 
 	// TODO: add your code here
-	
+	switch (integratorType) {
+		case 0:
+		{
+			// Add your code here
+			//x (kt + 1) = state t + stateDot t * dT
+			for (int i = 0; i < m_stateDot.size(); i++)
+			{
+				vec3 veli;
+				for (int j = 0; j < 3; j++) {
+					veli[j] = m_stateDot[i][j] * deltaT;
+					m_state[i][j] = m_state[i][j] + veli[j];
+				}
+			}
+			break;
+		}
 
+		case 1:
+		{
 
-
-
-
-
+			// Add your code here
+			//next state = this state + .5 (d1 + d2)
+			//d1 = deltaT * stateDot
+			//d2 = deltaT * stateDot predict (Euler)
+			for (int i = 0; i < m_state.size(); i++) {
+				for (int j = 0; j < 3; j++) {
+					double d1 = m_stateDot[i][j];
+					double d2 = m_state[i][j] + m_stateDot[i][j] * deltaT;
+					m_state[i][j] = m_state[i][j] + 0.5 * (d1 + d2);
+				}
+			}
+			break;
+		}
+	}
 
 	//  given the new values in m_state, these are the new component state values 
 	m_Pos0 = m_state[POS];
@@ -240,13 +285,33 @@ void BehaviorController::updateState(float deltaT, int integratorType)
 
 	//  Perform validation check to make sure all values are within MAX values
 	// TODO: add your code here
+	double speed = m_VelB[0] * m_VelB[0] + m_VelB[1] * m_VelB[1] + m_VelB[2] * m_VelB[2];
+	speed = sqrt(speed);
+	if (speed > gMaxSpeed) {
+		//validation check
+		std::cout << "Error: speed out of range" << std::endl;
+	}
 
+	double angularSpeed = m_AVelB[0] * m_AVelB[0] + m_AVelB[1] * m_AVelB[1] + m_AVelB[2] * m_AVelB[2];
+	angularSpeed = sqrt(angularSpeed);
+	if (angularSpeed > gMaxAngularSpeed) {
+		//validation check
+		std::cout << "Error: angular speed out of range" << std::endl;
+	}
 
+	double force = m_force[0] * m_force[0] + m_force[1] * m_force[1] + m_force[2] * m_force[2];
+	force = sqrt(force);
+	if (force > gMaxForce) {
+		//validation check
+		std::cout << "Error: force out of range" << std::endl;
+	}
 
-
-
-
-
+	double torque = m_torque[0] * m_torque[0] + m_torque[1] * m_torque[1] + m_torque[2] * m_torque[2];
+	torque = sqrt(torque);
+	if (torque > gMaxTorque) {
+		//validation check
+		std::cout << "Error: torque out of range" << std::endl;
+	}
 
 	// update the guide orientation
 	// compute direction from nonzero velocity vector
