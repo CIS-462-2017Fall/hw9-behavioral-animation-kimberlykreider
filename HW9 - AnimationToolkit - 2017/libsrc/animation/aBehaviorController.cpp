@@ -30,6 +30,7 @@ double BehaviorController::KWander = 80.0;
 double BehaviorController::KAvoid = 600.0;  
 double BehaviorController::TAvoid = 1000.0;   
 double BehaviorController::KSeparation = 12000.0; 
+double BehaviorController::RNeighborhood = 1000.0;
 double BehaviorController::KAlignment = 1.0;  
 double BehaviorController::KCohesion = 1.0;  
 
